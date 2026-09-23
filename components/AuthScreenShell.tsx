@@ -111,8 +111,7 @@ export function AuthScreenShell({
               scrollEventThrottle={16}
               contentContainerStyle={[
                 styles.content,
-                keyboardOpen && styles.contentKeyboard,
-                keyboardOpen && { paddingBottom: keyboardHeight.current + 32 },
+                keyboardOpen && { paddingBottom: Math.max(24, keyboardHeight.current * 0.12) },
               ]}
             >
               {children}
@@ -134,10 +133,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 16,
     paddingVertical: 24,
-  },
-  contentKeyboard: {
-    flexGrow: 0,
-    justifyContent: 'flex-start',
-    paddingTop: 8,
   },
 });

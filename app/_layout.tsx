@@ -1,10 +1,11 @@
 import { DarkTheme, ThemeProvider, type ErrorBoundaryProps, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
-import { AuthProvider } from '@/lib/auth-context';
+import { EventProvider } from '@/lib/event-context';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -46,7 +47,8 @@ function BootSplash({ children }: { children: ReactNode }) {
 export default function RootLayout() {
   return (
     <ThemeProvider value={navTheme}>
-      <AuthProvider>
+      <EventProvider>
+        <StatusBar style="light" />
         <BootSplash>
           <Stack
             initialRouteName="index"
@@ -60,7 +62,7 @@ export default function RootLayout() {
             <Stack.Screen name="scan" />
           </Stack>
         </BootSplash>
-      </AuthProvider>
+      </EventProvider>
     </ThemeProvider>
   );
 }

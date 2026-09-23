@@ -1,36 +1,33 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AuthScreenShell, useAuthKeyboard } from '@/components/AuthScreenShell';
-import { Loader } from '@/components/Loader';
+import { Spinner } from '@/components/Spinner';
 import { Logo } from '@/components/Logo';
 import { NeonCard } from '@/components/NeonCard';
 import { colors } from '@/constants/theme';
-import { useAuth } from '@/lib/auth-context';
+import { useEventSession } from '@/lib/event-context';
 
-function LoginForm() {
-  const { signIn } = useAuth();
+function TokenForm() {
+  const { enter } = useEventSession();
   const { keyboardOpen } = useAuthKeyboard();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [token, setToken] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function submit() {
-    if (!email.trim() || !password) {
-      setError('Informe e-mail e senha da equipe.');
+    if (!token.trim()) {
+      setError('Token inválido');
       return;
     }
     setBusy(true);
     setError(null);
     try {
       Keyboard.dismiss();
-      await signIn(email, password);
+      await enter(token);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Não foi possível entrar.');
+      setError('Token inválido');
     } finally {
       setBusy(false);
     }
@@ -38,44 +35,32 @@ function LoginForm() {
 
   return (
     <>
-      {keyboardOpen ? null : (
-        <View style={styles.logoWrap}>
-          <Logo height={56} centered />
-          <Text style={styles.brand}>PORTARIA</Text>
-        </View>
-      )}
+      <View style={[styles.logoWrap, keyboardOpen && styles.logoWrapCompact]}>
+        <Logo height={keyboardOpen ? 40 : 56} centered />
+        <Text style={styles.brand}>PORTARIA</Text>
+      </View>
       <NeonCard>
         <Text style={styles.title}>Entrar</Text>
-        <Text style={styles.lead}>Conta da equipe Gate8 para validar ingressos na porta.</Text>
+        <Text style={styles.lead}>
+          Cole o token da portaria gerado no painel do produtor.
+        </Text>
         {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Text style={styles.label}>E-MAIL</Text>
+        <Text style={styles.label}>TOKEN</Text>
         <TextInput
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
+          value={token}
+          onChangeText={(value) => setToken(value.replace(/\D/g, ''))}
+          keyboardType="number-pad"
+          inputMode="numeric"
+          maxLength={12}
           autoCorrect={false}
-          keyboardType="email-address"
-          placeholder="equipe@gate8.club"
+          autoComplete="off"
+          placeholder="Token do evento"
           placeholderTextColor="rgba(255,255,255,0.28)"
           style={styles.input}
+          onSubmitEditing={() => void submit()}
         />
-        <Text style={styles.label}>SENHA</Text>
-        <View style={styles.passRow}>
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-            placeholder="••••••••"
-            placeholderTextColor="rgba(255,255,255,0.28)"
-            style={[styles.input, styles.passInput]}
-            onSubmitEditing={() => void submit()}
-          />
-          <Pressable onPress={() => setShowPassword((open) => !open)} hitSlop={10} style={styles.eye}>
-            <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={18} color={colors.muted} />
-          </Pressable>
-        </View>
         <Pressable onPress={() => void submit()} disabled={busy} style={styles.button}>
-          {busy ? <Loader size={22} color={colors.loginText} /> : <Text style={styles.buttonText}>Entrar</Text>}
+          {busy ? <Spinner size={20} color={colors.loginText} /> : <Text style={styles.buttonText}>Entrar</Text>}
         </Pressable>
       </NeonCard>
     </>
@@ -84,15 +69,15 @@ function LoginForm() {
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { event, loading } = useEventSession();
 
   useEffect(() => {
-    if (!loading && user) router.replace('/scan');
-  }, [loading, router, user]);
+    if (!loading && event) router.replace('/scan');
+  }, [event, loading, router]);
 
   return (
     <AuthScreenShell>
-      <LoginForm />
+      <TokenForm />
     </AuthScreenShell>
   );
 }
@@ -101,6 +86,9 @@ const styles = StyleSheet.create({
   logoWrap: {
     alignItems: 'center',
     marginBottom: 28,
+  },
+  logoWrapCompact: {
+    marginBottom: 16,
   },
   brand: {
     color: colors.blue,
@@ -123,6 +111,7 @@ const styles = StyleSheet.create({
   error: {
     color: colors.danger,
     marginBottom: 12,
+    textAlign: 'center',
   },
   label: {
     color: colors.muted,
@@ -139,17 +128,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     marginBottom: 14,
-  },
-  passRow: {
-    position: 'relative',
-  },
-  passInput: {
-    paddingRight: 44,
-  },
-  eye: {
-    position: 'absolute',
-    right: 14,
-    top: 14,
   },
   button: {
     backgroundColor: colors.blue,

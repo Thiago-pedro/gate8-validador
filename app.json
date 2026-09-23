@@ -19,6 +19,7 @@
       }
     },
     "android": {
+      "softwareKeyboardLayoutMode": "resize",
       "package": "club.gate8.validador",
       "adaptiveIcon": {
         "backgroundColor": "#050d1f",

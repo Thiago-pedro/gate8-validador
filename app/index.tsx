@@ -3,19 +3,19 @@ import { useEffect } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
-import { useAuth } from '@/lib/auth-context';
+import { useEventSession } from '@/lib/event-context';
 
 export default function SplashIndex() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { event, loading } = useEventSession();
 
   useEffect(() => {
     if (loading) return;
     const timer = setTimeout(() => {
-      router.replace(user ? '/scan' : '/login');
+      router.replace(event ? '/scan' : '/login');
     }, 1600);
     return () => clearTimeout(timer);
-  }, [loading, router, user]);
+  }, [event, loading, router]);
 
   return (
     <View style={styles.splash}>
