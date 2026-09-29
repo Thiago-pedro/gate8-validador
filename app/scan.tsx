@@ -22,6 +22,8 @@ import { colors } from '@/constants/theme';
 import { checkinCode, type CheckinKind, type CheckinResponse } from '@/lib/checkin';
 import { useEventSession } from '@/lib/event-context';
 
+const PORTARIA_BLUE = '#0000fe';
+
 const OVERLAY: Record<CheckinKind, string> = {
   valid: 'rgba(34, 197, 94, 0.80)',
   used: 'rgba(249, 115, 22, 0.80)',
@@ -115,12 +117,16 @@ export default function ScanScreen() {
     router.replace('/login');
   }
 
-  if (loading || !event) {
+  if (loading) {
     return (
       <View style={styles.boot}>
         <Spinner size={28} color={colors.blue} />
       </View>
     );
+  }
+
+  if (!event) {
+    return <View style={styles.boot} />;
   }
 
   return (
@@ -300,8 +306,8 @@ const styles = StyleSheet.create({
   },
   glass: {
     backgroundColor: 'rgba(255,255,255,0.05)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.10)',
+    borderWidth: 1.5,
+    borderColor: PORTARIA_BLUE,
     borderRadius: 16,
     padding: 12,
   },

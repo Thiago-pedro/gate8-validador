@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
@@ -8,10 +8,12 @@ import { useEventSession } from '@/lib/event-context';
 export default function SplashIndex() {
   const router = useRouter();
   const { event, loading } = useEventSession();
+  const routed = useRef(false);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || routed.current) return;
     const timer = setTimeout(() => {
+      routed.current = true;
       router.replace(event ? '/scan' : '/login');
     }, 1600);
     return () => clearTimeout(timer);
@@ -19,7 +21,7 @@ export default function SplashIndex() {
 
   return (
     <View style={styles.splash}>
-      <Image source={require('../assets/images/splash-8.png')} style={styles.eight} resizeMode="contain" />
+      <Image source={require('../assets/images/splash-portaria.png')} style={styles.eight} resizeMode="contain" />
     </View>
   );
 }
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   eight: {
-    width: 160,
-    height: 160,
+    width: 192,
+    height: 192,
   },
 });

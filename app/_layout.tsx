@@ -2,10 +2,12 @@ import { DarkTheme, ThemeProvider, type ErrorBoundaryProps, Stack } from 'expo-r
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, type ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import { EventProvider } from '@/lib/event-context';
+
+const LOGIN_LOGO = require('../assets/images/logo-gate8-login.png');
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,6 +52,7 @@ export default function RootLayout() {
       <EventProvider>
         <StatusBar style="light" />
         <BootSplash>
+          <Image source={LOGIN_LOGO} style={styles.prefetchLogo} />
           <Stack
             initialRouteName="index"
             screenOptions={{
@@ -68,6 +71,12 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
+  prefetchLogo: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    opacity: 0,
+  },
   errorScreen: {
     flex: 1,
     backgroundColor: colors.bg,
