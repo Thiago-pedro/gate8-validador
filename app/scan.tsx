@@ -4,10 +4,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
+  Animated,
   ImageBackground,
+  Keyboard,
+  Modal,
   Pressable,
   StyleSheet,
   Text,
@@ -74,6 +74,36 @@ export default function ScanScreen() {
   const [outcome, setOutcome] = useState<CheckinResponse | null>(null);
   const [leaveOpen, setLeaveOpen] = useState(false);
   const lock = useRef(false);
+  const manualAnchor = useRef<View>(null);
+  const manualShift = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    function place(keyboardTop: number) {
+      manualAnchor.current?.measureInWindow((_x, y, _w, height) => {
+        const overlap = y + height + 12 - keyboardTop;
+        Animated.timing(manualShift, {
+          toValue: overlap > 0 ? -overlap : 0,
+          duration: 180,
+          useNativeDriver: true,
+        }).start();
+      });
+    }
+
+    const show = Keyboard.addListener('keyboardDidShow', (event) => {
+      place(event.endCoordinates.screenY);
+    });
+    const hide = Keyboard.addListener('keyboardDidHide', () => {
+      Animated.timing(manualShift, {
+        toValue: 0,
+        duration: 180,
+        useNativeDriver: true,
+      }).start();
+    });
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, [manualShift]);
 
   useEffect(() => {
     if (!loading && !event) router.replace('/login');
@@ -138,10 +168,6 @@ export default function ScanScreen() {
       fadeDuration={0}
     >
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-      <KeyboardAvoidingView
-        style={styles.safe}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
         <View style={styles.page}>
           <View style={styles.header}>
             <Wordmark height={28} />
@@ -213,33 +239,38 @@ export default function ScanScreen() {
             </View>
           </Glass>
 
-          <Glass>
-            <Text style={styles.kicker}>Código manual</Text>
-            <View style={styles.manualRow}>
-              <TextInput
-                value={manual}
-                onChangeText={setManual}
-                placeholder="Digite o código do ingresso"
-                placeholderTextColor="rgba(255,255,255,0.40)"
-                autoCapitalize="characters"
-                autoCorrect={false}
-                style={styles.input}
-                onSubmitEditing={() => {
-                  void run(manual);
-                  setManual('');
-                }}
-              />
-              <GradientButton
-                label="Validar"
-                onPress={() => {
-                  void run(manual);
-                  setManual('');
-                }}
-              />
-            </View>
-          </Glass>
+          <View ref={manualAnchor} collapsable={false}>
+            <Animated.View style={{ transform: [{ translateY: manualShift }] }}>
+              <Glass>
+                <Text style={styles.kicker}>Código manual</Text>
+                <View style={styles.manualRow}>
+                  <TextInput
+                    value={manual}
+                    onChangeText={setManual}
+                    placeholder="Digite o código do ingresso"
+                    placeholderTextColor="rgba(255,255,255,0.40)"
+                    autoCapitalize="characters"
+                    autoCorrect={false}
+                    style={styles.input}
+                    onSubmitEditing={() => {
+                      Keyboard.dismiss();
+                      void run(manual);
+                      setManual('');
+                    }}
+                  />
+                  <GradientButton
+                    label="Validar"
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      void run(manual);
+                      setManual('');
+                    }}
+                  />
+                </View>
+              </Glass>
+            </Animated.View>
+          </View>
         </View>
-      </KeyboardAvoidingView>
 
       <Modal
         visible={leaveOpen}
