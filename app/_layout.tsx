@@ -1,13 +1,11 @@
 import { DarkTheme, ThemeProvider, type ErrorBoundaryProps, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, type ReactNode } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
 import { EventProvider } from '@/lib/event-context';
-
-const LOGIN_LOGO = require('../assets/images/logo-gate8-login.png');
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,51 +29,49 @@ const navTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    background: colors.bg,
-    card: colors.bg,
+    background: '#000000',
+    card: '#000000',
     primary: colors.blue,
     text: colors.text,
     border: colors.border,
   },
 };
 
-function BootSplash({ children }: { children: ReactNode }) {
-  useEffect(() => {
-    void SplashScreen.hideAsync();
-  }, []);
-  return children;
-}
-
 export default function RootLayout() {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void SplashScreen.hideAsync();
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <ThemeProvider value={navTheme}>
       <EventProvider>
         <StatusBar style="light" />
-        <BootSplash>
-          <Image source={LOGIN_LOGO} style={styles.prefetchLogo} />
+        <View style={styles.app}>
           <Stack
             initialRouteName="index"
             screenOptions={{
               headerShown: false,
-              contentStyle: { backgroundColor: colors.bg },
+              contentStyle: { backgroundColor: '#000000' },
+              animation: 'none',
             }}
           >
-            <Stack.Screen name="index" />
-            <Stack.Screen name="login" />
-            <Stack.Screen name="scan" />
+            <Stack.Screen name="index" options={{ animation: 'none' }} />
+            <Stack.Screen name="login" options={{ animation: 'none' }} />
+            <Stack.Screen name="scan" options={{ animation: 'none' }} />
           </Stack>
-        </BootSplash>
+        </View>
       </EventProvider>
     </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  prefetchLogo: {
-    position: 'absolute',
-    width: 1,
-    height: 1,
-    opacity: 0,
+  app: {
+    flex: 1,
+    backgroundColor: '#000000',
   },
   errorScreen: {
     flex: 1,

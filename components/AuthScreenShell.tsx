@@ -1,9 +1,6 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { createContext, useContext, useEffect, useRef, type ReactNode } from 'react';
-import { Animated, Easing, Keyboard, Platform, StyleSheet, View } from 'react-native';
+import { Animated, Easing, ImageBackground, Keyboard, Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { colors } from '@/constants/theme';
 
 const KEYBOARD_LIFT = 100;
 
@@ -59,12 +56,13 @@ export function AuthScreenShell({
 
   return (
     <AuthKeyboardContext.Provider value={{ keyboardOpen: false, ensureVisible: () => undefined }}>
-      <View style={styles.root}>
-        <LinearGradient
-          colors={['rgba(0, 123, 255, 0.22)', colors.bg, colors.bg]}
-          style={StyleSheet.absoluteFill}
-        />
-        <SafeAreaView style={styles.root} edges={['top']}>
+      <ImageBackground
+        source={require('../assets/images/fundo-validador.jpg')}
+        style={styles.root}
+        resizeMode="cover"
+        fadeDuration={0}
+      >
+        <SafeAreaView style={styles.fill} edges={['top']}>
           {header}
           <Animated.View style={[styles.content, { transform: [{ translateY: lift }] }]}>
             {children}
@@ -75,7 +73,7 @@ export function AuthScreenShell({
             {footer}
           </View>
         ) : null}
-      </View>
+      </ImageBackground>
     </AuthKeyboardContext.Provider>
   );
 }
@@ -83,7 +81,12 @@ export function AuthScreenShell({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.bg,
+    backgroundColor: '#000000',
+  },
+  fill: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    zIndex: 1,
   },
   content: {
     flex: 1,

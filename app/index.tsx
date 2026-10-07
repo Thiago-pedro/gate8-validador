@@ -1,27 +1,49 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect, useRef, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
 import { useEventSession } from '@/lib/event-context';
+
+const SPLASH = require('../assets/images/splash-portaria.png');
 
 export default function SplashIndex() {
   const router = useRouter();
   const { event, loading } = useEventSession();
   const routed = useRef(false);
+  const [holdDone, setHoldDone] = useState(false);
 
   useEffect(() => {
-    if (loading || routed.current) return;
-    const timer = setTimeout(() => {
-      routed.current = true;
-      router.replace(event ? '/scan' : '/login');
-    }, 1600);
+    const timer = setTimeout(() => setHoldDone(true), 1200);
     return () => clearTimeout(timer);
-  }, [event, loading, router]);
+  }, []);
+
+  useEffect(() => {
+    if (!holdDone || loading || routed.current) return;
+    routed.current = true;
+    router.replace(event ? '/scan' : '/login');
+  }, [event, holdDone, loading, router]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (routed.current) return;
+      routed.current = true;
+      router.replace('/login');
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
     <View style={styles.splash}>
-      <Image source={require('../assets/images/splash-portaria.png')} style={styles.eight} resizeMode="contain" />
+      <Image
+        source={SPLASH}
+        resizeMode="cover"
+        fadeDuration={0}
+        onLoad={() => {
+          void SplashScreen.hideAsync();
+        }}
+        style={styles.full}
+      />
     </View>
   );
 }
@@ -29,12 +51,10 @@ export default function SplashIndex() {
 const styles = StyleSheet.create({
   splash: {
     flex: 1,
-    backgroundColor: colors.bg,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#000000',
   },
-  eight: {
-    width: 192,
-    height: 192,
+  full: {
+    width: '100%',
+    height: '100%',
   },
 });

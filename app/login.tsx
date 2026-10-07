@@ -12,6 +12,7 @@ import { useEventSession } from '@/lib/event-context';
 const LOGIN_LOGO = require('../assets/images/logo-gate8-login.png');
 const LOGIN_LOGO_ASPECT = 1024 / 205;
 const PORTARIA_BLUE = '#0000fe';
+const GATE_SILVER = '#B3B1B2';
 const TOKEN_LENGTH = 6;
 
 function TokenForm() {
@@ -56,7 +57,7 @@ function TokenForm() {
           resizeMode="contain"
           fadeDuration={0}
         />
-        <Text style={styles.brand}>PORTARIA</Text>
+        <Text style={styles.brand}>VALIDADOR</Text>
       </View>
       <NeonCard accent={PORTARIA_BLUE}>
         <Text style={styles.title}>Entrar</Text>
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     width: 56 * LOGIN_LOGO_ASPECT,
   },
   brand: {
-    color: PORTARIA_BLUE,
+    color: GATE_SILVER,
     fontWeight: '800',
     letterSpacing: 4,
     marginTop: 2,

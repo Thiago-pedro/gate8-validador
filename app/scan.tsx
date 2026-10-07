@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
+  ImageBackground,
   Pressable,
   StyleSheet,
   Text,
@@ -130,6 +131,12 @@ export default function ScanScreen() {
   }
 
   return (
+    <ImageBackground
+      source={require('../assets/images/fundo-validacao.jpg')}
+      style={styles.root}
+      resizeMode="cover"
+      fadeDuration={0}
+    >
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.safe}
@@ -270,13 +277,18 @@ export default function ScanScreen() {
         </View>
       </Modal>
     </SafeAreaView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
   safe: {
     flex: 1,
-    backgroundColor: colors.bg,
+    backgroundColor: 'transparent',
   },
   boot: {
     flex: 1,

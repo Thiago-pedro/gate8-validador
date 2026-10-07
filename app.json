@@ -33,9 +33,8 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-portaria.png",
-          "resizeMode": "contain",
-          "backgroundColor": "#050d1f",
-          "imageWidth": 216
+          "resizeMode": "cover",
+          "backgroundColor": "#000000"
         }
       ],
       [
