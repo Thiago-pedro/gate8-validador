@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Gate8 Portaria",
+    "name": "GATE8 Validador",
     "slug": "gate8-validador",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,6 +15,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "club.gate8.validador",
       "infoPlist": {
+        "CFBundleDisplayName": "GATE8 Validador",
         "NSCameraUsageDescription": "A câmera lê o QR do ingresso na portaria."
       }
     },
