@@ -1,8 +1,10 @@
 import { DarkTheme, ThemeProvider, type ErrorBoundaryProps, Stack } from 'expo-router';
+import { NavigationBar } from 'expo-navigation-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';
 import { EventProvider } from '@/lib/event-context';
@@ -38,6 +40,8 @@ const navTheme = {
 };
 
 export default function RootLayout() {
+  const insets = useSafeAreaInsets();
+
   useEffect(() => {
     const timer = setTimeout(() => {
       void SplashScreen.hideAsync();
@@ -62,6 +66,10 @@ export default function RootLayout() {
             <Stack.Screen name="login" options={{ animation: 'none' }} />
             <Stack.Screen name="scan" options={{ animation: 'none' }} />
           </Stack>
+          {Platform.OS === 'android' ? <NavigationBar style="light" /> : null}
+          {Platform.OS === 'android' && insets.bottom > 0 ? (
+            <View pointerEvents="none" style={[styles.navScrim, { height: insets.bottom }]} />
+          ) : null}
         </View>
       </EventProvider>
     </ThemeProvider>
@@ -72,6 +80,14 @@ const styles = StyleSheet.create({
   app: {
     flex: 1,
     backgroundColor: '#000000',
+  },
+  navScrim: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#000000',
+    zIndex: 40,
   },
   errorScreen: {
     flex: 1,

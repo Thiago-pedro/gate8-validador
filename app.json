@@ -7,10 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "gate8validador",
     "userInterfaceStyle": "dark",
-    "androidNavigationBar": {
-      "backgroundColor": "#0b1730",
-      "barStyle": "light-content"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "club.gate8.validador",
@@ -44,7 +40,14 @@
           "cameraPermission": "A câmera lê o QR do ingresso na portaria."
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-navigation-bar",
+        {
+          "style": "light",
+          "enforceContrast": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
