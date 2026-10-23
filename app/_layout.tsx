@@ -2,7 +2,6 @@ import { DarkTheme, ThemeProvider, type ErrorBoundaryProps, Stack } from 'expo-r
 import { NavigationBar } from 'expo-navigation-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -42,13 +41,6 @@ const navTheme = {
 export default function RootLayout() {
   const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      void SplashScreen.hideAsync();
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <ThemeProvider value={navTheme}>
       <EventProvider>
@@ -63,8 +55,8 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="index" options={{ animation: 'none' }} />
-            <Stack.Screen name="login" options={{ animation: 'none' }} />
-            <Stack.Screen name="scan" options={{ animation: 'none' }} />
+            <Stack.Screen name="login" options={{ animation: 'fade', animationDuration: 500 }} />
+            <Stack.Screen name="scan" options={{ animation: 'fade', animationDuration: 500 }} />
           </Stack>
           {Platform.OS === 'android' ? <NavigationBar style="light" /> : null}
           {Platform.OS === 'android' && insets.bottom > 0 ? (
